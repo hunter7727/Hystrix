@@ -46,16 +46,23 @@ import com.netflix.hystrix.util.HystrixRollingNumber;
 public abstract class HystrixThreadPoolProperties {
 
     /* defaults */
+    //核心线程大小，默认10
     static int default_coreSize = 10;            // core size of thread pool
+    //最大线程大小，默认10
     static int default_maximumSize = 10;         // maximum size of thread pool
+    //线程存活时间，默认1分钟
     static int default_keepAliveTimeMinutes = 1; // minutes to keep a thread alive
+    //任务队列大小，这里默认关闭队列功能
     static int default_maxQueueSize = -1;        // size of queue (this can't be dynamically changed so we use 'queueSizeRejectionThreshold' to artificially limit and reject)
                                                  // -1 turns it off and makes us use SynchronousQueue
+    //todo:
     static boolean default_allow_maximum_size_to_diverge_from_core_size = false; //should the maximumSize config value get read and used in configuring the threadPool
                                                                                  //turning this on should be a conscious decision by the user, so we default it to false
-
+    //todo: 任务队列拒绝阈值
     static int default_queueSizeRejectionThreshold = 5; // number of items in queue
+    //线程池滚动窗口大小，默认10s
     static int default_threadPoolRollingNumberStatisticalWindow = 10000; // milliseconds for rolling number
+    //线程池滚动窗口bucket数量，默认10个
     static int default_threadPoolRollingNumberStatisticalWindowBuckets = 10; // number of buckets in rolling number (10 1-second buckets)
 
     private final HystrixProperty<Integer> corePoolSize;

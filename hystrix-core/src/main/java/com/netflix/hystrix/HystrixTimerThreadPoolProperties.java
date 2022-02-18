@@ -15,6 +15,7 @@ public abstract class HystrixTimerThreadPoolProperties {
     private final HystrixProperty<Integer> corePoolSize;
 
     protected HystrixTimerThreadPoolProperties() {
+        //核心线程数大小：默认JVM可用的CPU数量
         this(new Setter().withCoreSize(Runtime.getRuntime().availableProcessors()));
     }
 

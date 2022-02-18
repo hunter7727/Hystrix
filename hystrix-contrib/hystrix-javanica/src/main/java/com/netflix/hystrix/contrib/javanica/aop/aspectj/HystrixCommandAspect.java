@@ -60,6 +60,7 @@ import static com.netflix.hystrix.contrib.javanica.utils.EnvUtils.isCompileWeavi
 import static com.netflix.hystrix.contrib.javanica.utils.ajc.AjcUtils.getAjcMethodAroundAdvice;
 
 /**
+ * 用于处理hystrixCommand的切面类
  * AspectJ aspect to process methods which annotated with {@link HystrixCommand} annotation.
  */
 @Aspect

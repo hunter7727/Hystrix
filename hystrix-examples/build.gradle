@@ -3,6 +3,7 @@ apply plugin: 'osgi'
 dependencies {
     compileApi project(':hystrix-core')
     provided 'junit:junit-dep:4.10'
+    provided 'org.springframework:spring-web:5.2.8.RELEASE'  //为了测试远程调用 添加该依赖
 }
 
 task(runDemo, dependsOn: 'classes', type: JavaExec) {

@@ -150,6 +150,7 @@ public class HystrixTimer {
         public void initialize() {
 
             HystrixPropertiesStrategy propertiesStrategy = HystrixPlugins.getInstance().getPropertiesStrategy();
+            //默认大小是jvm虚拟机可以使用的cpu核心数梁
             int coreSize = propertiesStrategy.getTimerThreadPoolProperties().getCorePoolSize().get();
 
             ThreadFactory threadFactory = null;
@@ -168,7 +169,7 @@ public class HystrixTimer {
             } else {
                 threadFactory = PlatformSpecific.getAppEngineThreadFactory();
             }
-
+            //线程最大数量为 ：Integer.MAX_VALUE
             executor = new ScheduledThreadPoolExecutor(coreSize, threadFactory);
             initialized = true;
         }

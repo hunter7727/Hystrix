@@ -328,6 +328,7 @@ public abstract class HystrixCommand<R> extends AbstractCommand<R> implements Hy
     }
 
     /**
+     * 同步执行命令
      * Used for synchronous execution of command.
      * 
      * @return R
@@ -348,13 +349,19 @@ public abstract class HystrixCommand<R> extends AbstractCommand<R> implements Hy
     }
 
     /**
+     * 用于异步执行命令
      * Used for asynchronous execution of command.
      * <p>
+     *     将命令在线程池中进行排队后返回一个future用于在执行完成命令后的结果返回
      * This will queue up the command on the thread pool and return an {@link Future} to get the result once it completes.
      * <p>
+     *      如果配置为不在一个单独的线程中运行，他和execute()方法的作用一样都将被阻塞
      * NOTE: If configured to not run in a separate thread, this will have the same effect as {@link #execute()} and will block.
      * <p>
-     * We don't throw an exception but just flip to synchronous execution so code doesn't need to change in order to switch a command from running on a separate thread to the calling thread.
+     *     我们没有抛出一个异常，仅仅是转换了同步执行
+     * We don't throw an exception but just flip to synchronous execution
+     * 因此，将一个运行在单独线程上的命令切换到调用线程上并不需要更改代码
+     * so code doesn't need to change in order to switch a command from running on a separate thread to the calling thread.
      * 
      * @return {@code Future<R>} Result of {@link #run()} execution or a fallback from {@link #getFallback()} if the command fails for any reason.
      * @throws HystrixRuntimeException

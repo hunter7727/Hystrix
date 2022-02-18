@@ -234,20 +234,26 @@ public interface HystrixCircuitBreaker {
             return circuitOpened.get() >= 0;
         }
 
+        //是否允许发送请求
         @Override
         public boolean allowRequest() {
+            //强制开启状态则不允许发送请求
             if (properties.circuitBreakerForceOpen().get()) {
                 return false;
             }
+            //强制关闭状态则允许发送请求
             if (properties.circuitBreakerForceClosed().get()) {
                 return true;
             }
+            //断路器打开时间为空，则代表断路器没有打开
             if (circuitOpened.get() == -1) {
                 return true;
             } else {
+                //断路器半开状态
                 if (status.get().equals(Status.HALF_OPEN)) {
                     return false;
                 } else {
+                    //重置时间是否结束，这将允许尝试执行
                     return isAfterSleepWindow();
                 }
             }
@@ -256,22 +262,29 @@ public interface HystrixCircuitBreaker {
         private boolean isAfterSleepWindow() {
             final long circuitOpenTime = circuitOpened.get();
             final long currentTime = System.currentTimeMillis();
+            //默认5s
             final long sleepWindowTime = properties.circuitBreakerSleepWindowInMilliseconds().get();
             return currentTime > circuitOpenTime + sleepWindowTime;
         }
 
+        //尝试执行
         @Override
         public boolean attemptExecution() {
+            //强制打开情况下，不允许执行
             if (properties.circuitBreakerForceOpen().get()) {
                 return false;
             }
+            //强制关闭情况下，允许执行
             if (properties.circuitBreakerForceClosed().get()) {
                 return true;
             }
+            //断路器打开时间为-1，表示没有打开，允许执行
             if (circuitOpened.get() == -1) {
                 return true;
-            } else {
+            } else { //断路器打开时间不为-1，表示断路器打开了，此时判断断路器的打开时间是否已经过了重置时间(默认暂停5s后可以进行尝试)
                 if (isAfterSleepWindow()) {
+                    //这里仅允许一个请求执行
+                    //如果这个请求执行成功，断路器关闭，如果执行失败，断路器恢复打开状态，如果任务被取消订阅，则恢复打开状态
                     //only the first request after sleep window should execute
                     //if the executing command succeeds, the status will transition to CLOSED
                     //if the executing command fails, the status will transition to OPEN

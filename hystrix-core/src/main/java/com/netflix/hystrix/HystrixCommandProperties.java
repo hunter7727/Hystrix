@@ -39,28 +39,51 @@ public abstract class HystrixCommandProperties {
     private static final Logger logger = LoggerFactory.getLogger(HystrixCommandProperties.class);
 
     /* defaults */
+    //滑动窗口大小，默认10s(默认10个bucket,1个bucket 1s)
     /* package */ static final Integer default_metricsRollingStatisticalWindow = 10000;// default => statisticalWindow: 10000 = 10 seconds (and default of 10 buckets so each bucket is 1 second)
+    //在一个滑动窗口中bucket的数量
     private static final Integer default_metricsRollingStatisticalWindowBuckets = 10;// default => statisticalWindowBuckets: 10 = 10 buckets in a 10 second window so each bucket is 1 second
+    //请求阈值：在一个滑动窗口中必须有多少个请求才进行统计，默认20
     private static final Integer default_circuitBreakerRequestVolumeThreshold = 20;// default => statisticalWindowVolumeThreshold: 20 requests in 10 seconds must occur before statistics matter
+    //在断路器打开后，睡眠多长时间后再尝试请求，默认5s
     private static final Integer default_circuitBreakerSleepWindowInMilliseconds = 5000;// default => sleepWindow: 5000 = 5 seconds that we will sleep before trying again after tripping the circuit
+    //错误百分比，在一个情况窗口内默认50%
     private static final Integer default_circuitBreakerErrorThresholdPercentage = 50;// default => errorThresholdPercentage = 50 = if 50%+ of requests in 10 seconds are failures or latent then we will trip the circuit
+    //是否强制断路器打开，默认否
     private static final Boolean default_circuitBreakerForceOpen = false;// default => forceCircuitOpen = false (we want to allow traffic)
-    /* package */ static final Boolean default_circuitBreakerForceClosed = false;// default => ignoreErrors = false 
+    //是否强制断路器关闭，默认否
+    /* package */ static final Boolean default_circuitBreakerForceClosed = false;// default => ignoreErrors = false
+    //请求超时时间，默认1s
     private static final Integer default_executionTimeoutInMilliseconds = 1000; // default => executionTimeoutInMilliseconds: 1000 = 1 second
+    //是否开启请求超时控制，默认是
     private static final Boolean default_executionTimeoutEnabled = true;
+    //执行隔离策略，默认线程级别
     private static final ExecutionIsolationStrategy default_executionIsolationStrategy = ExecutionIsolationStrategy.THREAD;
+    //是否允许在执行超时后被打断，默认是
     private static final Boolean default_executionIsolationThreadInterruptOnTimeout = true;
+    //是否允许打断执行线程，默认否
     private static final Boolean default_executionIsolationThreadInterruptOnFutureCancel = false;
+    //监控是否开启，默认是
     private static final Boolean default_metricsRollingPercentileEnabled = true;
+    //请求缓存是否开启，默认是
     private static final Boolean default_requestCacheEnabled = true;
+    //fallback的信号量，默认10
     private static final Integer default_fallbackIsolationSemaphoreMaxConcurrentRequests = 10;
+    //fallback是否开启，默认是
     private static final Boolean default_fallbackEnabled = true;
+    //执行任务的信号量，默认10
     private static final Integer default_executionIsolationSemaphoreMaxConcurrentRequests = 10;
+    //请求日志是否开启，默认是
     private static final Boolean default_requestLogEnabled = true;
+    //断路器是否开启，默认是
     private static final Boolean default_circuitBreakerEnabled = true;
-    private static final Integer default_metricsRollingPercentileWindow = 60000; // default to 1 minute for RollingPercentile 
+    //监控滚动百分比的窗口大小，默认1 minute
+    private static final Integer default_metricsRollingPercentileWindow = 60000; // default to 1 minute for RollingPercentile
+    //监控滚动百分比的窗口bucket数量，默认6个
     private static final Integer default_metricsRollingPercentileWindowBuckets = 6; // default to 6 buckets (10 seconds each in 60 second window)
+    //监控滚动百分比窗口bucket中记录值的数量，默认100个
     private static final Integer default_metricsRollingPercentileBucketSize = 100; // default to 100 values max per bucket
+    //健康快照的时间间隔，默认500ms
     private static final Integer default_metricsHealthSnapshotIntervalInMilliseconds = 500; // default to 500ms as max frequency between allowing snapshots of health (error percentage etc)
 
     @SuppressWarnings("unused") private final HystrixCommandKey key;

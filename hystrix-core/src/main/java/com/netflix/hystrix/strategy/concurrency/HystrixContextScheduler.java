@@ -168,6 +168,7 @@ public class HystrixContextScheduler extends Scheduler {
             subscription.add(sa);
             sa.addParent(subscription);
 
+            //分配线程 提交任务
             ThreadPoolExecutor executor = (ThreadPoolExecutor) threadPool.getExecutor();
             FutureTask<?> f = (FutureTask<?>) executor.submit(sa);
             sa.add(new FutureCompleterWithConfigurableInterrupt(f, shouldInterruptThread, executor));
