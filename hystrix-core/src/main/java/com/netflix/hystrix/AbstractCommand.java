@@ -570,6 +570,7 @@ import java.util.concurrent.atomic.AtomicReference;
         /* determine if we're allowed to execute */
         //查看断路器是否允许执行
         if (circuitBreaker.attemptExecution()) {
+            //获取信号量，如果是线程池隔离策略情况下这里返回TryableSemaphoreNoOp实例
             final TryableSemaphore executionSemaphore = getExecutionSemaphore();
             final AtomicBoolean semaphoreHasBeenReleased = new AtomicBoolean(false);
             final Action0 singleSemaphoreRelease = new Action0() {
@@ -588,6 +589,7 @@ import java.util.concurrent.atomic.AtomicReference;
                 }
             };
 
+            //如果是线程池隔离策略，这里为true
             if (executionSemaphore.tryAcquire()) {
                 try {
                     /* used to track userThreadExecutionTime */
@@ -600,9 +602,11 @@ import java.util.concurrent.atomic.AtomicReference;
                     return Observable.error(e);
                 }
             } else {
+                //未获取到信号量
                 return handleSemaphoreRejectionViaFallback();
             }
         } else {
+            //断路器不允许执行
             return handleShortCircuitViaFallback();
         }
     }

@@ -1,0 +1,8 @@
+1、滑动窗口实现原理
+    HystrixCommandMetrics.HealthCounts类会保存请求失败率的数据
+    HystrixCommandMetrics.HealthCounts.plus()请求失败率时机通过这个方法进行计算
+    HystrixCircuitBreakerImpl.subscribeToStream.onNext()该方法会开启断路器
+    1.1、什么时机会调用HystrixCircuitBreakerImpl.subscribeToStream.onNext()方法进行断路器的开启
+        猜测：定时任务间隔调用该方法
+    1.2、谁在什么时机会调用这个方法HystrixCommandMetrics.HealthCounts.plus()
+

@@ -47,7 +47,7 @@ public abstract class HystrixCommandProperties {
     private static final Integer default_circuitBreakerRequestVolumeThreshold = 20;// default => statisticalWindowVolumeThreshold: 20 requests in 10 seconds must occur before statistics matter
     //在断路器打开后，睡眠多长时间后再尝试请求，默认5s
     private static final Integer default_circuitBreakerSleepWindowInMilliseconds = 5000;// default => sleepWindow: 5000 = 5 seconds that we will sleep before trying again after tripping the circuit
-    //错误百分比，在一个情况窗口内默认50%
+    //断路器开启的百分比阈值 50%，如果10s内有超过50%的请求失败或者超时，此时触发断路器
     private static final Integer default_circuitBreakerErrorThresholdPercentage = 50;// default => errorThresholdPercentage = 50 = if 50%+ of requests in 10 seconds are failures or latent then we will trip the circuit
     //是否强制断路器打开，默认否
     private static final Boolean default_circuitBreakerForceOpen = false;// default => forceCircuitOpen = false (we want to allow traffic)
@@ -83,7 +83,7 @@ public abstract class HystrixCommandProperties {
     private static final Integer default_metricsRollingPercentileWindowBuckets = 6; // default to 6 buckets (10 seconds each in 60 second window)
     //监控滚动百分比窗口bucket中记录值的数量，默认100个
     private static final Integer default_metricsRollingPercentileBucketSize = 100; // default to 100 values max per bucket
-    //健康快照的时间间隔，默认500ms
+    //发送快照数据的时间间隔，用于任务失败率的统计，默认500ms
     private static final Integer default_metricsHealthSnapshotIntervalInMilliseconds = 500; // default to 500ms as max frequency between allowing snapshots of health (error percentage etc)
 
     @SuppressWarnings("unused") private final HystrixCommandKey key;

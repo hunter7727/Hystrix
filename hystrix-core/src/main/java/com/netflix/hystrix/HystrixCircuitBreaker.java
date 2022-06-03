@@ -173,9 +173,12 @@ public interface HystrixCircuitBreaker {
 
                         }
 
+                        //todo：谁调用的这个方法，他的上游是什么
+                        //todo: 这个方法控制断路器的打开动作
                         @Override
                         public void onNext(HealthCounts hc) {
                             // check if we are past the statisticalWindowVolumeThreshold
+                            //一个时间窗口内，请求数量是否达标，如果没有达标则不进行断路器开启的判断
                             if (hc.getTotalRequests() < properties.circuitBreakerRequestVolumeThreshold().get()) {
                                 // we are not past the minimum volume threshold for the stat window,
                                 // so no change to circuit status.
@@ -183,6 +186,7 @@ public interface HystrixCircuitBreaker {
                                 // if it was half-open, we need to wait for a successful command execution
                                 // if it was open, we need to wait for sleep window to elapse
                             } else {
+                                //当前请求失败率，大于等于断路器开启的阈值，则触发断路器打开
                                 if (hc.getErrorPercentage() < properties.circuitBreakerErrorThresholdPercentage().get()) {
                                     //we are not past the minimum error threshold for the stat window,
                                     // so no change to circuit status.
@@ -191,6 +195,7 @@ public interface HystrixCircuitBreaker {
                                     // if it was open, we need to wait for sleep window to elapse
                                 } else {
                                     // our failure rate is too high, we need to set the state to OPEN
+                                    //失败率太高，需要打开断路器
                                     if (status.compareAndSet(Status.CLOSED, Status.OPEN)) {
                                         circuitOpened.set(System.currentTimeMillis());
                                     }

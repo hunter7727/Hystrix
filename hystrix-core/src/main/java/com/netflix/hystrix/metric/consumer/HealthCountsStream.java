@@ -27,6 +27,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
+ * 持有一个给定command 滚动健康统计的一个流
+ * 它是基于这个流的滑动窗口
+ * 这个健康统计的对象是由t1时间窗口中的请求计算来的(默认500ms)，这个窗口内包含b个桶的数量(默认10个)
+ * 因此每50ms产生一个健康统计对象
  * Maintains a stream of rolling health counts for a given Command.
  * There is a rolling window abstraction on this stream.
  * The HealthCounts object is calculated over a window of t1 milliseconds.  This window has b buckets.
@@ -34,12 +38,15 @@ import java.util.concurrent.ConcurrentMap;
  * t1 = {@link HystrixCommandProperties#metricsHealthSnapshotIntervalInMilliseconds()}
  * b = {@link HystrixCommandProperties#metricsRollingStatisticalWindowBuckets()}
  *
+ * 这些值是稳定的，直到被发射的时候他们才会被放入桶中
  * These values are stable - there's no peeking into a bucket until it is emitted
  *
  * These values get produced and cached in this class.  This value (the latest observed value) may be queried using {@link #getLatest()}.
  */
 public class HealthCountsStream extends BucketedRollingCounterStream<HystrixCommandCompletion, long[], HystrixCommandMetrics.HealthCounts> {
-
+    /**
+     *  每一个commandKey 都会对应一个HealthCountsStream
+     */
     private static final ConcurrentMap<String, HealthCountsStream> streams = new ConcurrentHashMap<String, HealthCountsStream>();
 
     private static final int NUM_EVENT_TYPES = HystrixEventType.values().length;

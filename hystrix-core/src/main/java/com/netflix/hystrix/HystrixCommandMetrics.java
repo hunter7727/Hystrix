@@ -54,6 +54,7 @@ public class HystrixCommandMetrics extends HystrixMetrics {
                 switch (eventType) {
                     case EXCEPTION_THROWN: break; //this is just a sum of other anyway - don't do the work here
                     default:
+                        //滑动窗口计数器，就是在这里计数的
                         initialCountArray[eventType.ordinal()] += eventCounts.getCount(eventType);
                         break;
                 }
@@ -389,8 +390,11 @@ public class HystrixCommandMetrics extends HystrixMetrics {
      * Error percentage;
      */
     public static class HealthCounts {
+        //总共的请求数量
         private final long totalCount;
+        //错误的请求数量
         private final long errorCount;
+        //错误请求百分比
         private final int errorPercentage;
 
         HealthCounts(long total, long error) {
@@ -417,16 +421,25 @@ public class HystrixCommandMetrics extends HystrixMetrics {
             return errorPercentage;
         }
 
+        /**
+         * 滑动窗口的请求错误率是在这里计算的
+         *
+         * @param eventTypeCounts
+         * @return
+         */
         public HealthCounts plus(long[] eventTypeCounts) {
             long updatedTotalCount = totalCount;
             long updatedErrorCount = errorCount;
 
+            //ordinal 方法是 返回当前枚举在该类型下所有枚举中的索引位置
+            //换句话说 这个数组中eventTypeCounts 1位置代表成功请求的个数，2位置代表失败请求个数，3位置代表超时请求的个数，6代表线程池拒绝请求的个数，7代表信号量拒绝请求的个数
             long successCount = eventTypeCounts[HystrixEventType.SUCCESS.ordinal()];
             long failureCount = eventTypeCounts[HystrixEventType.FAILURE.ordinal()];
             long timeoutCount = eventTypeCounts[HystrixEventType.TIMEOUT.ordinal()];
             long threadPoolRejectedCount = eventTypeCounts[HystrixEventType.THREAD_POOL_REJECTED.ordinal()];
             long semaphoreRejectedCount = eventTypeCounts[HystrixEventType.SEMAPHORE_REJECTED.ordinal()];
 
+            //累计总请求量 和 错误请求量
             updatedTotalCount += (successCount + failureCount + timeoutCount + threadPoolRejectedCount + semaphoreRejectedCount);
             updatedErrorCount += (failureCount + timeoutCount + threadPoolRejectedCount + semaphoreRejectedCount);
             return new HealthCounts(updatedTotalCount, updatedErrorCount);
